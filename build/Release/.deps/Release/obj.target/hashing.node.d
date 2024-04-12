@@ -1,0 +1,1 @@
+cmd_Release/obj.target/hashing.node := g++ -shared -pthread -rdynamic -m64  -Wl,-soname=hashing.node -o Release/obj.target/hashing.node -Wl,--start-group Release/obj.target/hashing/hashing.o Release/obj.target/hashing/algorithms/sha256d.o Release/obj.target/hashing/algorithms/utils/sph_sha2.o -Wl,--end-group -Wl,-rpath,./build/Release/
