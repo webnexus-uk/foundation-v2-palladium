@@ -35,7 +35,7 @@ config.settings.interval.blocks = 1000; // ms
 config.ports = [];
 
 const ports1 = {};
-ports1.port = 3002;
+ports1.port = 3004;
 ports1.enabled = true;
 ports1.tls = false;
 ports1.difficulty = {};
@@ -65,7 +65,7 @@ config.primary.daemons = [];
 
 const daemons1 = {};
 daemons1.host = "127.0.0.1";
-daemons1.port = 8332;
+daemons1.port = 2332;
 daemons1.username = "";
 daemons1.password = "";
 config.primary.daemons.push(daemons1);

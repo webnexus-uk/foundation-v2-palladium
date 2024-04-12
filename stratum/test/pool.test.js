@@ -16,7 +16,7 @@ const primaryPaymentsConfig = {
   transactionFee: 0.004,
   daemon: {
     host: "127.0.0.2",
-    port: 8332,
+    port: 2332,
     username: "foundation",
     password: "foundation",
   },
@@ -62,7 +62,7 @@ process.env.forkId = "0";
 ////////////////////////////////////////////////////////////////////////////////
 
 function mockSetupDaemons(pool, callback) {
-  nock("http://127.0.0.1:8332")
+  nock("http://127.0.0.1:2332")
     .post("/", (body) => body.method === "getpeerinfo")
     .reply(
       200,
@@ -72,7 +72,7 @@ function mockSetupDaemons(pool, callback) {
         result: null,
       })
     );
-  nock("http://127.0.0.2:8332")
+  nock("http://127.0.0.2:2332")
     .post("/", (body) => body.method === "getpeerinfo")
     .reply(
       200,
@@ -108,7 +108,7 @@ function mockSetupDaemons(pool, callback) {
 }
 
 function mockSetupSettings(pool, callback) {
-  nock("http://127.0.0.1:8332")
+  nock("http://127.0.0.1:2332")
     .post("/")
     .reply(
       200,
@@ -138,7 +138,7 @@ function mockSetupSettings(pool, callback) {
 }
 
 function mockSetupPrimaryBlockchain(pool, callback) {
-  nock("http://127.0.0.1:8332")
+  nock("http://127.0.0.1:2332")
     .post("/", (body) => body.method === "getblocktemplate")
     .reply(
       200,
@@ -168,7 +168,7 @@ function mockSetupAuxiliaryBlockchain(pool, callback) {
 }
 
 function mockSetupFirstJob(pool, callback) {
-  nock("http://127.0.0.1:8332")
+  nock("http://127.0.0.1:2332")
     .post("/", (body) => body.method === "getblocktemplate")
     .reply(
       200,
@@ -213,7 +213,7 @@ function mockClient() {
   client.addrPrimary = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2";
   client.previousDifficulty = 0;
   (client.difficulty = 1), (client.extraNonce1 = 0), (client.socket = socket);
-  client.socket.localPort = 3002;
+  client.socket.localPort = 3004;
   client.sendLabel = () => {
     return "client [example]";
   };
@@ -258,16 +258,16 @@ describe("Test pool functionality", () => {
     mockSetupDaemons(pool, () => {
       pool.setupPorts();
       expect(typeof pool.difficulty).toBe("object");
-      expect(typeof pool.difficulty["3002"]).toBe("object");
-      expect(typeof pool.difficulty["3002"].handleClient).toBe("function");
-      expect(pool.difficulty["3002"]._eventsCount).toBe(1);
+      expect(typeof pool.difficulty["3004"]).toBe("object");
+      expect(typeof pool.difficulty["3004"].handleClient).toBe("function");
+      expect(pool.difficulty["3004"]._eventsCount).toBe(1);
     });
   });
 
   test("Test port difficulty setup [2]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      pool.difficulty["3002"] = { removeAllListeners: () => done() };
+      pool.difficulty["3004"] = { removeAllListeners: () => done() };
       pool.setupPorts();
     });
   });
@@ -277,7 +277,7 @@ describe("Test pool functionality", () => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
       pool.setupPorts();
-      pool.difficulty["3002"].emit("client.difficulty.new", client);
+      pool.difficulty["3004"].emit("client.difficulty.new", client);
     });
   });
 
@@ -298,7 +298,7 @@ describe("Test pool functionality", () => {
   test("Test pool settings setup [2]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -347,7 +347,7 @@ describe("Test pool functionality", () => {
       }
     });
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -389,7 +389,7 @@ describe("Test pool functionality", () => {
       }
     });
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -422,7 +422,7 @@ describe("Test pool functionality", () => {
   test("Test pool settings setup [5]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -465,7 +465,7 @@ describe("Test pool functionality", () => {
   test("Test pool settings setup [6]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -605,7 +605,7 @@ describe("Test pool functionality", () => {
     });
     mockSetupDaemons(pool, () => {
       mockSetupSettings(pool, () => {
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "submitblock")
           .reply(
             200,
@@ -672,7 +672,7 @@ describe("Test pool functionality", () => {
     });
     mockSetupDaemons(pool, () => {
       mockSetupSettings(pool, () => {
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "submitblock")
           .reply(
             200,
@@ -747,7 +747,7 @@ describe("Test pool functionality", () => {
       mockSetupSettings(pool, () => {
         pool.on("pool.share", (data, type) => {
           expect(type).toBe(true);
-          nock("http://127.0.0.1:8332")
+          nock("http://127.0.0.1:2332")
             .post("/", (body) => body.method === "getblocktemplate")
             .reply(
               200,
@@ -758,7 +758,7 @@ describe("Test pool functionality", () => {
               })
             );
         });
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "submitblock")
           .reply(
             200,
@@ -768,7 +768,7 @@ describe("Test pool functionality", () => {
               result: null,
             })
           );
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getblock")
           .reply(
             200,
@@ -837,7 +837,7 @@ describe("Test pool functionality", () => {
       mockSetupSettings(pool, () => {
         pool.on("pool.share", (data, type) => {
           expect(type).toBe(true);
-          nock("http://127.0.0.1:8332")
+          nock("http://127.0.0.1:2332")
             .post("/", (body) => body.method === "getblocktemplate")
             .reply(
               200,
@@ -848,7 +848,7 @@ describe("Test pool functionality", () => {
               })
             );
         });
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "submitblock")
           .reply(
             200,
@@ -858,7 +858,7 @@ describe("Test pool functionality", () => {
               result: null,
             })
           );
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getblock")
           .reply(
             200,
@@ -920,7 +920,7 @@ describe("Test pool functionality", () => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
       mockSetupSettings(pool, () => {
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getblocktemplate")
           .reply(
             200,
@@ -948,7 +948,7 @@ describe("Test pool functionality", () => {
     });
     mockSetupDaemons(pool, () => {
       mockSetupSettings(pool, () => {
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getblocktemplate")
           .reply(
             200,
@@ -958,7 +958,7 @@ describe("Test pool functionality", () => {
               result: null,
             })
           );
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getblockchaininfo")
           .reply(
             200,
@@ -968,7 +968,7 @@ describe("Test pool functionality", () => {
               result: blockchainDataCopy,
             })
           );
-        nock("http://127.0.0.1:8332")
+        nock("http://127.0.0.1:2332")
           .post("/", (body) => body.method === "getpeerinfo")
           .reply(
             200,
@@ -1082,7 +1082,7 @@ describe("Test pool functionality", () => {
         pool.setupManager();
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
-            nock("http://127.0.0.1:8332")
+            nock("http://127.0.0.1:2332")
               .post("/", (body) => body.method === "getblocktemplate")
               .reply(
                 200,
@@ -1127,7 +1127,7 @@ describe("Test pool functionality", () => {
         pool.setupManager();
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
-            nock("http://127.0.0.1:8332")
+            nock("http://127.0.0.1:2332")
               .post("/", (body) => body.method === "getblocktemplate")
               .reply(
                 200,
@@ -1150,7 +1150,7 @@ describe("Test pool functionality", () => {
       if (type !== "debug") {
         expect(type).toBe("warning");
         expect(text).toBe(
-          "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+          "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
         );
         done();
       }
@@ -1160,7 +1160,7 @@ describe("Test pool functionality", () => {
         pool.setupManager();
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
-            nock("http://127.0.0.1:8332")
+            nock("http://127.0.0.1:2332")
               .post("/", (body) => body.method === "getblocktemplate")
               .reply(
                 200,
@@ -1185,7 +1185,7 @@ describe("Test pool functionality", () => {
         pool.statistics.difficulty = 400;
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
-            nock("http://127.0.0.1:8332")
+            nock("http://127.0.0.1:2332")
               .post("/", (body) => body.method === "getblocktemplate")
               .reply(
                 200,
@@ -1214,7 +1214,7 @@ describe("Test pool functionality", () => {
         if (response.length === 2) {
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("log");
           expect(response[1][1]).toBe(
@@ -1230,7 +1230,7 @@ describe("Test pool functionality", () => {
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblocktemplate")
                 .reply(
@@ -1241,7 +1241,7 @@ describe("Test pool functionality", () => {
                     result: rpcDataCopy,
                   })
                 );
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblockchaininfo")
                 .reply(
@@ -1274,7 +1274,7 @@ describe("Test pool functionality", () => {
         if (response.length === 3) {
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("log");
           expect(response[1][1]).toBe(
@@ -1294,7 +1294,7 @@ describe("Test pool functionality", () => {
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblocktemplate")
                 .reply(
@@ -1316,7 +1316,7 @@ describe("Test pool functionality", () => {
                     result: auxDataCopy,
                   })
                 );
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblockchaininfo")
                 .reply(
@@ -1360,7 +1360,7 @@ describe("Test pool functionality", () => {
         if (response.length === 2) {
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("error");
           expect(response[1][1]).toBe(
@@ -1376,7 +1376,7 @@ describe("Test pool functionality", () => {
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblocktemplate")
                 .reply(
@@ -1398,7 +1398,7 @@ describe("Test pool functionality", () => {
                     result: null,
                   })
                 );
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblockchaininfo")
                 .reply(
@@ -1444,7 +1444,7 @@ describe("Test pool functionality", () => {
         if (response.length === 3) {
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("log");
           expect(response[1][1]).toBe(
@@ -1464,7 +1464,7 @@ describe("Test pool functionality", () => {
         mockSetupPrimaryBlockchain(pool, () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblocktemplate")
                 .reply(
@@ -1486,7 +1486,7 @@ describe("Test pool functionality", () => {
                     result: auxDataCopy,
                   })
                 );
-              nock("http://127.0.0.1:8332")
+              nock("http://127.0.0.1:2332")
                 .persist()
                 .post("/", (body) => body.method === "getblockchaininfo")
                 .reply(
@@ -1562,7 +1562,7 @@ describe("Test pool functionality", () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
               pool.setupNetwork(() => {
-                nock("http://127.0.0.1:8332")
+                nock("http://127.0.0.1:2332")
                   .post("/", (body) => body.method === "getblocktemplate")
                   .reply(
                     200,
@@ -1602,7 +1602,7 @@ describe("Test pool functionality", () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
               pool.setupNetwork(() => {
-                nock("http://127.0.0.1:8332")
+                nock("http://127.0.0.1:2332")
                   .post("/", (body) => body.method === "getblocktemplate")
                   .reply(
                     200,
@@ -1654,7 +1654,7 @@ describe("Test pool functionality", () => {
           mockSetupAuxiliaryBlockchain(pool, () => {
             mockSetupFirstJob(pool, () => {
               pool.setupNetwork(() => {
-                pool.difficulty["3002"] = {
+                pool.difficulty["3004"] = {
                   handleClient: () => {
                     pool.network.on("network.stopped", () => done());
                     pool.network.stopNetwork();
@@ -1716,7 +1716,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("log");
           expect(response[1][1]).toBe(
@@ -1759,7 +1759,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1799,7 +1799,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1839,7 +1839,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1879,7 +1879,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1919,7 +1919,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1959,7 +1959,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -1999,7 +1999,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -2039,7 +2039,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("log");
           expect(response[1][1]).toBe(
@@ -2079,7 +2079,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -2119,7 +2119,7 @@ describe("Test pool functionality", () => {
           pool.network.on("network.stopped", () => done());
           expect(response[0][0]).toBe("warning");
           expect(response[0][1]).toBe(
-            "Network difficulty (0) is lower than the difficulty on port 3002 (32)"
+            "Network difficulty (0) is lower than the difficulty on port 3004 (32)"
           );
           expect(response[1][0]).toBe("warning");
           expect(response[1][1]).toBe(
@@ -2174,7 +2174,7 @@ describe("Test pool functionality", () => {
   });
 
   test("Test pool stratum setup [19]", (done) => {
-    configCopy.ports = [{ port: 3002, enabled: true, difficulty: {} }];
+    configCopy.ports = [{ port: 3004, enabled: true, difficulty: {} }];
     const client = mockClient();
     const pool = new Pool(configCopy, configMainCopy, () => {});
     pool.on("client.socket.success", () => {
@@ -2274,7 +2274,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [1]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2301,7 +2301,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [2]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2328,7 +2328,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [3]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2356,7 +2356,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [4]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2389,7 +2389,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [5]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2516,7 +2516,7 @@ describe("Test pool functionality", () => {
   test("Test pool stratum authentication [10]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2552,7 +2552,7 @@ describe("Test pool functionality", () => {
     configCopy.auxiliary.daemons = auxiliaryDaemons;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2601,7 +2601,7 @@ describe("Test pool functionality", () => {
     configCopy.auxiliary.daemons = auxiliaryDaemons;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "validateaddress")
         .reply(
           200,
@@ -2645,7 +2645,7 @@ describe("Test pool functionality", () => {
   test("Test pool rounds handling [1]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "gettransaction")
         .reply(
           200,
@@ -2673,7 +2673,7 @@ describe("Test pool functionality", () => {
   test("Test pool rounds handling [2]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -2709,7 +2709,7 @@ describe("Test pool functionality", () => {
   test("Test pool rounds handling [3]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -2747,7 +2747,7 @@ describe("Test pool functionality", () => {
   test("Test pool rounds handling [4]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -2777,7 +2777,7 @@ describe("Test pool functionality", () => {
     transactionDataCopy.details = null;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/")
         .reply(
           200,
@@ -2809,7 +2809,7 @@ describe("Test pool functionality", () => {
   test("Test pool rounds handling [6]", (done) => {
     const pool = new Pool(configCopy, configMainCopy, () => {});
     mockSetupDaemons(pool, () => {
-      nock("http://127.0.0.1:8332")
+      nock("http://127.0.0.1:2332")
         .post("/", (body) => body.method === "gettransaction")
         .reply(
           200,
@@ -4391,7 +4391,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5000 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "listunspent")
       .reply(
         200,
@@ -4414,7 +4414,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 10 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "listunspent")
       .reply(
         200,
@@ -4437,7 +4437,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "listunspent")
       .reply(
         200,
@@ -4460,7 +4460,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "listunspent")
       .reply(
         200,
@@ -4483,7 +4483,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5000 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "listunspent")
       .reply(
         200,
@@ -4653,7 +4653,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5000 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "sendmany")
       .reply(
         200,
@@ -4703,7 +4703,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5000 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "sendmany")
       .reply(
         200,
@@ -4731,7 +4731,7 @@ describe("Test pool functionality", () => {
     configCopy.primary.payments = primaryPaymentsConfig;
     const pool = new Pool(configCopy, configMainCopy, () => {});
     const payments = { address1: 5000 };
-    nock("http://127.0.0.2:8332")
+    nock("http://127.0.0.2:2332")
       .post("/", (body) => body.method === "sendmany")
       .reply(
         200,
