@@ -10,12 +10,12 @@ const Transactions = function (config, rpcData) {
 
   // Mainnet Configuration
   this.configMainnet = {
-    bech32: "",
+    bech32: "plm",
     bip32: {
       public: Buffer.from("0488B21E", "hex").readUInt32LE(0),
       private: Buffer.from("0488ADE4", "hex").readUInt32LE(0),
     },
-    peerMagic: "fac7b2da",
+    peerMagic: "FAC7B2DA",
     pubKeyHash: Buffer.from("55", "hex").readUInt8(0),
     scriptHash: Buffer.from("5", "hex").readUInt8(0),
     wif: Buffer.from("128", "hex").readUInt8(0),
@@ -24,12 +24,12 @@ const Transactions = function (config, rpcData) {
 
   // Testnet Configuration
   this.configTestnet = {
-    bech32: "",
+    bech32: "tb",
     bip32: {
       public: Buffer.from("043587CF", "hex").readUInt32LE(0),
       private: Buffer.from("04358394", "hex").readUInt32LE(0),
     },
-    peerMagic: "0b110907",
+    peerMagic: "0B110907",
     pubKeyHash: Buffer.from("111", "hex").readUInt8(0),
     scriptHash: Buffer.from("196", "hex").readUInt8(0),
     wif: Buffer.from("239", "hex").readUInt8(0),
