@@ -10,7 +10,7 @@ const Transactions = function (config, rpcData) {
 
   // Mainnet Configuration
   this.configMainnet = {
-    bech32: "plm",
+    bech32: "pl",
     bip32: {
       public: Buffer.from("0488B21E", "hex").readUInt32LE(0),
       private: Buffer.from("0488ADE4", "hex").readUInt32LE(0),
